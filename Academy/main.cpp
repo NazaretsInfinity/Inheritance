@@ -196,6 +196,12 @@ void info()const override
 	cout << worktopic << " got: " << workgrade << endl;
 }
 };
+
+std::ostream& operator<<(std::ostream& os, const Human& pers)
+{
+	pers.info();
+	return os;
+}
 #define InheritanceCheck
 void main()
 {
@@ -217,7 +223,8 @@ void main()
 	};
 	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++)
 	{
-		group[i]->info();
+		//group[i]->info();
+		cout << *group[i] << delimeter;
 	}
 	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++) //CALL OF DISTRCTR
 	{

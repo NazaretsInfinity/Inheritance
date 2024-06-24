@@ -219,7 +219,8 @@ void main()
 	{
 	   new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
 	   new Teacher("White", "Walter", 50, "Chemisty", 25),
-	   new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98),
+	   new Graduate("Schreder", "Hank", 40, "Criminalistic", "OBN", 88,90, "How to catch Heisenberg", 5),
+	   new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98)
 	};
 	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++)
 	{

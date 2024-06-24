@@ -108,7 +108,7 @@ public:
 		cout << "STUD_Destructor:\t" << this << endl;
 	}
 	//METHODS
-	void info()const
+	void info()const override
 	{
 		Human::info();
 		cout << speciality << " " << group << " " << rating << " " << attendance << endl;
@@ -148,7 +148,7 @@ public:
 		cout << "TEAC_Destructor:\t" << this << endl;
 	}
 	//Methods
-	void info()const
+	void info()const override
 	{
 		Human::info();
 		cout << speciality << " " << experience << "-years" << endl;
@@ -177,7 +177,8 @@ void set_grade(unsigned int workgrade)
 	this->workgrade = workgrade;
 }
     //Constructor
-Graduate(human_take_parameters, student_take_parameters, std::string worktopic, unsigned int workgrade) : Student(human_give_parameters, student_give_parameters)
+Graduate(human_take_parameters, student_take_parameters, std::string worktopic, unsigned int workgrade)
+	: Student(human_give_parameters, student_give_parameters)
 {
 	set_topic(worktopic);
 	set_grade(workgrade);
@@ -189,7 +190,7 @@ Graduate(human_take_parameters, student_take_parameters, std::string worktopic, 
 	cout << "GRAD_Destructor:\t" << this << endl;
 }
   //Methods
-void info()
+void info()const override
 {
 	Student::info();
 	cout << worktopic << " got: " << workgrade << endl;

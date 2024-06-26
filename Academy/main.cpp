@@ -48,14 +48,20 @@ virtual ~Human()
 	cout << "HUMA_Destructor:\t" << this << endl;
 }
       //METHODS
-virtual void info()const
+virtual std::ostream& info(std::ostream& os)const
 {
-	cout << delimeter;
-	cout << last_name << " " << first_name << " " << age << " y/o" << endl;
+	return  os << last_name << " " << first_name << " " << age << " y/o" << endl;
 }
 };
+
+std::ostream& operator<<(std::ostream& os, const Human& pers)
+{
+	return pers.info(os);
+}
+
 #define student_take_parameters const std::string& speciality, const std::string& group, double rating,double attendance
 #define student_give_parameters speciality, group, rating, attendance
+
 class Student : public Human
 {
 	std::string speciality;
@@ -108,10 +114,9 @@ public:
 		cout << "STUD_Destructor:\t" << this << endl;
 	}
 	//METHODS
-	void info()const override
+	std::ostream& info(std::ostream& os)const override
 	{
-		Human::info();
-		cout << speciality << " " << group << " " << rating << " " << attendance << endl;
+		return Human::info(os) << speciality << " " << group << " " << rating << " " << attendance << endl;
 	}
 };
 class Teacher : public Human
@@ -148,10 +153,9 @@ public:
 		cout << "TEAC_Destructor:\t" << this << endl;
 	}
 	//Methods
-	void info()const override
+	std::ostream& info(std::ostream& os)const override
 	{
-		Human::info();
-		cout << speciality << " " << experience << "-years" << endl;
+		return Human::info(os) << speciality << " " << experience << "-years" << endl;
 	}
 };
 class Graduate : public Student
@@ -190,10 +194,9 @@ Graduate(human_take_parameters, student_take_parameters, std::string worktopic, 
 	cout << "GRAD_Destructor:\t" << this << endl;
 }
   //Methods
-void info()const override
+std::ostream& info(std::ostream& os)const override
 {
-	Student::info();
-	cout << worktopic << " got: " << workgrade << endl;
+	return Student::info(os) << worktopic << " got: " << workgrade << endl;
 }
 };
 

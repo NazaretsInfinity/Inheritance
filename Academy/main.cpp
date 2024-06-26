@@ -50,10 +50,15 @@ virtual ~Human()
       //METHODS
 virtual void info()const
 {
-	cout << delimeter;
 	cout << last_name << " " << first_name << " " << age << " y/o" << endl;
 }
 };
+std::ostream& operator<<(std::ostream& os, const Human& pers)
+{
+	os << pers.get_last_name() << " " << pers.get_first_name() << " " << pers.get_age() << " y/o";
+    return os;
+}
+
 #define student_take_parameters const std::string& speciality, const std::string& group, double rating,double attendance
 #define student_give_parameters speciality, group, rating, attendance
 class Student : public Human
@@ -75,7 +80,7 @@ public:
 	{
 		return rating;
 	}
-	double get_attendance()
+	double get_attendance()const
 	{
 		return attendance;
 	}
@@ -114,6 +119,14 @@ public:
 		cout << speciality << " " << group << " " << rating << " " << attendance << endl;
 	}
 };
+std::ostream& operator<<(std::ostream& os, const Student& pers)
+{
+	pers.Human::info();
+	os << pers.get_speciality() << " " << pers.get_group() << " " << pers.get_rating() << " "
+	<< pers.get_attendance();
+	return os;
+}
+
 class Teacher : public Human
 {
 	std::string speciality;
@@ -196,11 +209,6 @@ void info()const override
 	cout << worktopic << " got: " << workgrade << endl;
 }
 };
-std::ostream& operator<<(std::ostream& os, const Human& pers)
-{
-	pers.info();
-	return os;
-}
 
 #define InheritanceCheck
 void main()
@@ -225,7 +233,10 @@ void main()
 	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++)
 	{
 		//group[i]->info(); 
-		cout << *group[i] << delimeter;
+		cout << typeid(*group[i]).name() << ":" << endl;
+		if ((typeid(*group[i])) == typeid(Student))cout << *dynamic_cast<Student*>(group[i]);
+		else cout << *group[i];
+		cout << delimeter;
 	}
 	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++) //CALL OF DISTRCTR
 	{

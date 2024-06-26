@@ -196,7 +196,11 @@ void info()const override
 	cout << worktopic << " got: " << workgrade << endl;
 }
 };
-
+std::ostream& operator<<(std::ostream& os, const Human& pers)
+{
+	pers.info();
+	return os;
+}
 
 #define InheritanceCheck
 void main()

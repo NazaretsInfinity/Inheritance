@@ -15,7 +15,7 @@ void main()
 	//1) create a stream
 	std::ofstream fout;
 	//2) open the stream(use method 'open')
-	fout.open("File.txt",std::ios_base::app); //without app(only 1st prmtr we reewrite file
+	fout.open("File.txt",std::ios_base::app); //without app(only 1st prmtr we rewrite file
 	//3) write in the stream                 // with app(append) as 2nd prmtr we add in the end
 	
 	//fout << "Hello World" << endl;
@@ -25,7 +25,7 @@ void main()
 	fout << ctime(&now) << endl;
 
 	//4) close the stream
-	fout.close(); //with open - necessary!
+	fout.close();  //we opened - close is necessary!
 	system("notepad File.txt");
 #endif
 #ifdef READ_FROM_FILE

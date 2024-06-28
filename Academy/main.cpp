@@ -1,11 +1,17 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<string>
+#include<fstream>
 using namespace std;
 #define delimeter "\n===================================\n"
 #define human_take_parameters const std::string& last_name, const std::string& first_name, unsigned int age
 #define human_give_parameters  last_name,  first_name, age
 class Human
 {
+	static const int HUMAN_TYPE_WIDTH = 10;
+	static const int LAST_NAME_WIDTH = 15;
+	static const int FIRST_NAME_WIDTH = 15;
+	static const int AGE_WIDTH = 5;
 	std::string last_name;
 	std::string first_name;
 	unsigned int age;
@@ -50,7 +56,18 @@ public:
 	//METHODS
 	virtual std::ostream& info(std::ostream& os)const
 	{
-		return  os << last_name << " " << first_name << " " << age << " y/o" << endl;
+		os << endl;
+		return  os <<last_name << " " << first_name << " " << age << " y/o ";
+	}
+	virtual std::ofstream& info(std::ofstream& ofs)const
+	{
+		//ofs << strchr(typeid(*this).name(), ' ') + 1 << ": " << last_name << " " << first_name << " " << age;
+		ofs.width(HUMAN_TYPE_WIDTH);
+		ofs << left << std::string(strchr(typeid(*this).name(), ' ') + 1) + ":";
+		ofs.width(LAST_NAME_WIDTH);ofs<< left << last_name;
+		ofs.width(FIRST_NAME_WIDTH);ofs<< left << first_name;
+		ofs.width(AGE_WIDTH); ofs << left << age;
+		return ofs;
 	}
 };
 
@@ -58,12 +75,22 @@ std::ostream& operator<<(std::ostream& os, const Human& pers)
 {
 	return pers.info(os);
 }
+std::ofstream& operator<<(std::ofstream& ofs, const Human& obj)
+{
+	obj.info(ofs);
+	ofs << endl;
+	return ofs;
+}
 
 #define student_take_parameters const std::string& speciality, const std::string& group, double rating,double attendance
 #define student_give_parameters speciality, group, rating, attendance
 
 class Student : public Human
 {
+	static const int SPECIALITY_WIDTH=25;
+	static const int GROUP_WIDTH=8;
+	static const int RATING_WIDTH = 8;
+	static const int ATTENDANCE_WIDTH = 8;
 	std::string speciality;
 	std::string group;
 	double rating;
@@ -118,9 +145,21 @@ public:
 	{
 		return Human::info(os) << speciality << " " << group << " " << rating << " " << attendance;
 	}
+
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Human::info(ofs);
+		ofs.width(SPECIALITY_WIDTH);ofs << speciality;
+		ofs.width(GROUP_WIDTH);ofs << group;
+		ofs.width(RATING_WIDTH); ofs << rating;
+		ofs.width(ATTENDANCE_WIDTH); ofs << attendance;
+		return ofs;
+	}
 };
 class Teacher : public Human
 {
+	static const int SPECIALITY_WIDTH = 25;
+	static const int EXPERIENCE_WIDTH = 5;
 	std::string speciality;
 	unsigned int experience;
 public:
@@ -157,9 +196,18 @@ public:
 	{
 		return Human::info(os) << speciality << " " << experience << "-years";
 	}
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Human::info(ofs);
+		ofs.width(SPECIALITY_WIDTH); ofs << speciality;
+		ofs.width(EXPERIENCE_WIDTH); ofs << experience;
+		return ofs;
+	}
 };
 class Graduate : public Student
 {
+	static const int WORKTOPIC_WIDTH = 32;
+
 	std::string worktopic;
 	unsigned int workgrade;
 public:
@@ -196,10 +244,52 @@ public:
 	//Methods
 	std::ostream& info(std::ostream& os)const override
 	{
-		return Student::info(os) << endl << worktopic << " got: " << workgrade;
+		return Student::info(os) << " " << worktopic << " got: " << workgrade;
+	}
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Student::info(ofs);
+		ofs.width(WORKTOPIC_WIDTH);	ofs << worktopic;
+		return ofs;
 	}
 };
+void save(Human* group[], const int n, const std::string filename)
+{
+	std::ofstream fout(filename);
+	for (int i = 0; i < n; i++)
+	{
+		fout << *group[i];
+	}
+	fout.close();
+	std::string cmd = "notepad " + filename;
+	system(cmd.c_str()); // c_str - return data of object std string as  C-string(null terminated file)
+}
+void load(const std::string filename)
+{
+	std::ifstream fin(filename);
+	if (fin.is_open())
+	{
+		while (!fin.eof())
+		{
 
+		}
+	}
+	else std::cerr << "Error:file not found" << endl;
+}
+void print( Human* group[],  const int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		cout << *group[i] << delimeter;
+	}
+}
+void clear(Human* group[], const int n)
+{
+	for (int i = 0; i < n; i++) 
+	{
+		delete group[i];
+	}
+}
 #define InheritanceCheck
 void main()
 {
@@ -218,16 +308,12 @@ void main()
 	   new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
 	   new Teacher("White", "Walter", 50, "Chemisty", 25),
 	   new Graduate("Schreder", "Hank", 40, "Criminalistic", "OBN", 88,90, "How to catch Heisenberg", 5),
-	   new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98)
+	   new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98),
+	   new Teacher("Diaz","Ricardo", 50, "Weapons distribution", 20)
 	};
-	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++)
-	{
-		//group[i]->info(); 
-		cout << *group[i] << delimeter;
-	}
-	for (int i = 0; i < sizeof(group) / sizeof(group[i]); i++) //CALL OF DISTRCTR
-	{
-		delete group[i];
-	}
+	save(group, sizeof(group) / sizeof(group[0]), "group.txt");
+	load("group.txt");
+	//print(group, sizeof(group) / sizeof(group[0]));
+	clear(group, sizeof(group) / sizeof(group[0]));
 #endif 
 }

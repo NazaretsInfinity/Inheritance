@@ -59,7 +59,7 @@ public:
 		os << endl;
 		return  os <<last_name << " " << first_name << " " << age << " y/o ";
 	}
-	virtual std::ofstream& info(std::ofstream& ofs)const
+	virtual std::ofstream& write(std::ofstream& ofs)const
 	{
 		//ofs << strchr(typeid(*this).name(), ' ') + 1 << ": " << last_name << " " << first_name << " " << age;
 		ofs.width(HUMAN_TYPE_WIDTH);
@@ -69,6 +69,11 @@ public:
 		ofs.width(AGE_WIDTH); ofs << left << age;
 		return ofs;
 	}
+	virtual std::ifstream& read(std::ifstream& ifs)
+	{
+			ifs >> last_name >> first_name >> age;
+			return ifs;
+	}
 };
 
 std::ostream& operator<<(std::ostream& os, const Human& pers)
@@ -77,9 +82,13 @@ std::ostream& operator<<(std::ostream& os, const Human& pers)
 }
 std::ofstream& operator<<(std::ofstream& ofs, const Human& obj)
 {
-	obj.info(ofs);
+	obj.write(ofs);
 	ofs << endl;
 	return ofs;
+}
+std::ifstream& operator>>(std::ifstream& is, Human& obj)
+{
+	return obj.read(is);
 }
 
 #define student_take_parameters const std::string& speciality, const std::string& group, double rating,double attendance
@@ -146,14 +155,19 @@ public:
 		return Human::info(os) << speciality << " " << group << " " << rating << " " << attendance;
 	}
 
-	std::ofstream& info(std::ofstream& ofs)const override
+	std::ofstream& write(std::ofstream& ofs)const override
 	{
-		Human::info(ofs);
+		Human::write(ofs);
 		ofs.width(SPECIALITY_WIDTH);ofs << speciality;
 		ofs.width(GROUP_WIDTH);ofs << group;
 		ofs.width(RATING_WIDTH); ofs << rating;
 		ofs.width(ATTENDANCE_WIDTH); ofs << attendance;
 		return ofs;
+	}
+	std::ifstream& read(std::ifstream& ifs)override
+	{
+		Human::read(ifs) >> speciality >> group >> rating >> attendance;
+		return ifs;
 	}
 };
 class Teacher : public Human
@@ -196,13 +210,27 @@ public:
 	{
 		return Human::info(os) << speciality << " " << experience << "-years";
 	}
-	std::ofstream& info(std::ofstream& ofs)const override
+	std::ofstream& write(std::ofstream& ofs)const override
 	{
-		Human::info(ofs);
+		Human::write(ofs);
 		ofs.width(SPECIALITY_WIDTH); ofs << speciality;
 		ofs.width(EXPERIENCE_WIDTH); ofs << experience;
 		return ofs;
 	}
+	std::ifstream& read(std::ifstream& ifs)override
+	{
+		Human::read(ifs); 
+		std::string sam1, sam2;   // IN CASE SPECIALITY HAS WHITESPACES
+		ifs >> sam1 >> sam2;     
+		while (atoi(sam2.c_str()) == 0)
+		{
+			sam1 += " " + sam2;
+			ifs >> sam2;
+		}
+		speciality = sam1;
+		experience = atoi(sam2.c_str());
+		return ifs;      
+	}	
 };
 class Graduate : public Student
 {
@@ -246,10 +274,16 @@ public:
 	{
 		return Student::info(os) << " " << worktopic << " got: " << workgrade;
 	}
-	std::ofstream& info(std::ofstream& ofs)const override
+	std::ofstream& write(std::ofstream& ofs)const override
 	{
-		Student::info(ofs);
+		Student::write(ofs);
 		ofs.width(WORKTOPIC_WIDTH);	ofs << worktopic;
+		return ofs;
+	}
+	std::ifstream& read(std::ifstream& ofs)override
+	{
+		Student::read(ofs);
+		std::getline(ofs,worktopic); //'cause it has extra whitespaces
 		return ofs;
 	}
 };
@@ -264,17 +298,48 @@ void save(Human* group[], const int n, const std::string filename)
 	std::string cmd = "notepad " + filename;
 	system(cmd.c_str()); // c_str - return data of object std string as  C-string(null terminated file)
 }
-void load(const std::string filename)
+Human* HumanFactory(const std::string& type)
 {
+	Human* human = nullptr;
+	if (type == "Human:")human = new Human("", "", 0);
+	if (type == "Student:")human = new Student("", "", 0, "", "", 0, 0);
+	if (type == "Graduate:")human = new Graduate("", "", 0, "", "", 0, 0,"",0);
+	if (type == "Teacher:")human = new Teacher("", "", 0, "", 0);
+	return human;
+}
+Human** load(const std::string filename, int& n)
+{
+	Human** group = nullptr;
 	std::ifstream fin(filename);
 	if (fin.is_open())
 	{
+		//1) count amount of strings in file(people)
+		n = 0;
 		while (!fin.eof())
 		{
-
+			std::string buffer;
+			std::getline(fin, buffer);
+			if (buffer.size() < 16)continue;
+			n++;
 		}
+		//2) allocate memory 
+		group = new Human*[n];
+		//3) Get back to the start of file
+		fin.clear();
+		fin.seekg(0);
+		//4) reading objects
+		for (int i = 0; i < n; i++)
+		{
+			std::string type;
+			fin >> type;
+			group[i] = HumanFactory(type);
+			if (group[i])fin >> *group[i];
+			else continue;
+		}
+		fin.close();
 	}
 	else std::cerr << "Error:file not found" << endl;
+	return group;
 }
 void print( Human* group[],  const int n)
 {
@@ -291,6 +356,7 @@ void clear(Human* group[], const int n)
 	}
 }
 #define InheritanceCheck
+#define Polymorphism
 void main()
 {
 #ifdef InheritanceCheck1
@@ -302,7 +368,7 @@ void main()
 	Teacher teacher("White", "Walter", 50, "Chemisty", 25);
 	teacher.info();
 #endif  
-#ifdef InheritanceCheck
+#ifdef Polymorphism1
 	Human* group[] =
 	{
 	   new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
@@ -312,8 +378,11 @@ void main()
 	   new Teacher("Diaz","Ricardo", 50, "Weapons distribution", 20)
 	};
 	save(group, sizeof(group) / sizeof(group[0]), "group.txt");
-	load("group.txt");
-	//print(group, sizeof(group) / sizeof(group[0]));
+	print(group, sizeof(group) / sizeof(group[0]));
 	clear(group, sizeof(group) / sizeof(group[0]));
 #endif 
+	int n = 0;
+	Human** group = load("group.txt",n);
+	print(group, n);
+	clear(group, n);
 }

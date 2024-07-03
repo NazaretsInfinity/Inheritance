@@ -166,6 +166,18 @@ public:
 	}
 	std::ifstream& read(std::ifstream& ifs)override
 	{
+		/*Human::read(ifs);  // MY SOLUTION 
+		std::string sam;
+		ifs >> speciality >> sam;
+		if (!(isupper(sam[0])))
+		{
+			speciality += " " + sam;
+			ifs >> sam;
+		}
+		group = sam;
+		ifs >> rating >> attendance;*/
+
+
 		Human::read(ifs);
 		char buffer[SPECIALITY_WIDTH];
 		ifs.read(buffer, SPECIALITY_WIDTH);
@@ -228,7 +240,7 @@ public:
 	std::ifstream& read(std::ifstream& ifs)override
 	{
 		Human::read(ifs);
-	    /*std::string sam;
+	    /*std::string sam; // MY SOLUTION 
 		ifs >> speciality >> sam;
 		while (atoi(sam.c_str()) == 0)
 		{

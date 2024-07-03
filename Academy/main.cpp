@@ -220,15 +220,14 @@ public:
 	std::ifstream& read(std::ifstream& ifs)override
 	{
 		Human::read(ifs); 
-		std::string sam1, sam2;   // IN CASE SPECIALITY HAS WHITESPACES
-		ifs >> sam1 >> sam2;     
-		while (atoi(sam2.c_str()) == 0)
+		std::string sam;
+		ifs >> speciality >> sam;
+		while (atoi(sam.c_str()) == 0)
 		{
-			sam1 += " " + sam2;
-			ifs >> sam2;
+			speciality += " " + sam;
+			ifs >> sam;
 		}
-		speciality = sam1;
-		experience = atoi(sam2.c_str());
+		experience = atoi(sam.c_str());
 		return ifs;      
 	}	
 };

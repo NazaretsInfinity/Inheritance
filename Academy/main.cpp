@@ -166,7 +166,15 @@ public:
 	}
 	std::ifstream& read(std::ifstream& ifs)override
 	{
-		Human::read(ifs) >> speciality >> group >> rating >> attendance;
+		Human::read(ifs);
+		char buffer[SPECIALITY_WIDTH];
+		ifs.read(buffer, SPECIALITY_WIDTH);
+		for (int i = SPECIALITY_WIDTH - 1; buffer[i] == ' '; i--)buffer[i] = 0;
+
+		while (buffer[0] == ' ')
+			for (int i = 0; buffer[i]; i++)buffer[i] = buffer[i + 1];
+		this->speciality = buffer;
+		ifs >> group >> rating >> attendance;
 		return ifs;
 	}
 };
@@ -219,16 +227,30 @@ public:
 	}
 	std::ifstream& read(std::ifstream& ifs)override
 	{
-		Human::read(ifs); 
-		std::string sam;
+		Human::read(ifs);
+	    /*std::string sam;
 		ifs >> speciality >> sam;
 		while (atoi(sam.c_str()) == 0)
 		{
 			speciality += " " + sam;
 			ifs >> sam;
 		}
-		experience = atoi(sam.c_str());
-		return ifs;      
+		experience = atoi(sam.c_str());*/
+
+		const int size = SPECIALITY_WIDTH;
+		char buffer[size]{};
+		ifs.read(buffer, size);
+		int pos  = strrchr(buffer, ' ') - buffer;
+		buffer[pos] = 0;
+		for (int i = size - 2; buffer[i] == ' '; i--)buffer[i] = 0;
+		while (buffer[0] == ' ')
+		{
+			for (int i = 0; buffer[i]; i++)
+				buffer[i] = buffer[i + 1];
+		}
+		this ->speciality = buffer;
+		ifs >> experience;
+		return ifs;
 	}	
 };
 class Graduate : public Student

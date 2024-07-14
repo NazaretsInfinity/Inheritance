@@ -49,6 +49,8 @@ public:
 	~Square()
 	{cout << "SquareDestr:\t" << this << endl;}
 };
+
+
 class Triangle : public Polygon
 {
 	int f_side, sec_side, thrd_side;
@@ -70,7 +72,7 @@ public:
 	void info()override
 	{
 		cout << "First side: " << f_side << endl << "Second side: " << sec_side << endl << "Third side: " << thrd_side << endl;
-		cout << "Perimeter: " << perimeter() << "\t" << "Area: " << square() << "\n\n";
+		Polygon::info();
 	}
 };
 

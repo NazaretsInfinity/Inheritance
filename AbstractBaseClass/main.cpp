@@ -145,6 +145,7 @@ namespace Geometry
 			::Rectangle(hdc, 300, 50, 500, 150);
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
+			ReleaseDC(hwnd, hdc);
 		}
 
 		void info()const override
@@ -182,9 +183,10 @@ namespace Geometry
 			const POINT verts[3] = { {650,50}, {600,150}, {700,150} };
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
-			::Polygon(hdc, verts, 3);
+			Polygon(hdc, verts, 3);
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
+			ReleaseDC(hwnd, hdc);
 		}
 	};
 	class Circle : Shape
@@ -218,6 +220,7 @@ namespace Geometry
 			Ellipse(hdc, 800, 50, 900, 150);
 			DeleteObject(hpen);
 			DeleteObject(hbrush);
+			ReleaseDC(hwnd, hdc);
 		}
 	};
 

@@ -35,11 +35,15 @@ namespace Geometry
 		CONSOLE_YELLOW = 0x66,
 		CONSOLE_DEFAULT = 0x07,
 	};
+#define SHAPE_TAKE_PARAMETERS	unsigned int start_x, unsigned int start_y, unsigned int linewidth, Color color
+#define SHAPE_GIVE_PARAMETERS	start_x, start_y, linewidth, color
 	class Shape
 	{
+	protected:
 		Color color;
+		int start_x, start_y, linewidth;
 	public:
-		Shape(Color color) : color(color) {}
+		Shape(SHAPE_TAKE_PARAMETERS) : color(color),start_x(start_x),start_y(start_y),linewidth(linewidth) {}
 		virtual ~Shape() {}
 		virtual double area()const = 0;
 		virtual double perimeter()const = 0;
@@ -48,6 +52,30 @@ namespace Geometry
 		Color getCOLOR()const
 		{
 			return color;
+		}
+		unsigned int getX()const
+		{
+			return start_x;
+		}
+		unsigned int getY()const
+		{
+			return start_y;
+		}
+		unsigned int get_linewidth()const
+		{
+			return linewidth;
+		}
+		void set_start_x(unsigned int start_x)
+		{
+			this->start_x = start_x;
+		}
+		void set_start_y(unsigned int start_y)
+		{
+			this->start_y = start_y;
+		}
+		void set_line_width(unsigned int line_width)
+		{
+			this->linewidth = linewidth;
 		}
 		void setCOLOR(Color color)
 		{
@@ -71,6 +99,7 @@ namespace Geometry
 			draw();
 		}
 	};
+#ifdef SQUARE
 	class Square : public Shape
 	{
 		double side;
@@ -88,7 +117,7 @@ namespace Geometry
 		void draw()const override
 		{
 			HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-			SetConsoleTextAttribute(hConsole,(getCOLOR()));
+			SetConsoleTextAttribute(hConsole, (getCOLOR()));
 			for (int i = 0; i < side; i++)
 			{
 				for (int i = 0; i < side; i++)
@@ -112,11 +141,13 @@ namespace Geometry
 			Shape::info();
 		}
 	};
+#endif 
+
 	class Rectangle : Shape
 	{
 		double width, height;
 	public:
-		Rectangle(double width, double height, Color color) : Shape(color), width(width), height(height) {}
+		Rectangle(double width, double height, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), width(width), height(height) {}
 		~Rectangle() {}
 
 		double area()const override
@@ -142,7 +173,7 @@ namespace Geometry
 			
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
-			::Rectangle(hdc, 300, 50, 500, 150);
+			::Rectangle(hdc, start_x,start_y,start_x+width,start_y+height);
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 			ReleaseDC(hwnd, hdc);
@@ -154,12 +185,19 @@ namespace Geometry
 			Shape::info(); cout << endl;
 		}
 	};
+	class Square :public Rectangle
+	{
+	public:
+		Square(double side, SHAPE_TAKE_PARAMETERS) :Rectangle(side, side, SHAPE_GIVE_PARAMETERS) {}
+		~Square() {}
+	};
+#ifdef Triangle_3side_members
 	class Triangle : public Shape
 	{
 		int f_side, sec_side, thrd_side;
 	public:
-		Triangle(int fs, int ss, int ts, Color color) : Shape(color), f_side(fs), sec_side(ss), thrd_side(ts){}
-		~Triangle(){}
+		Triangle(int fs, int ss, int ts, Color color) : Shape(color), f_side(fs), sec_side(ss), thrd_side(ts) {}
+		~Triangle() {}
 		double perimeter()const override { return f_side + sec_side + thrd_side; }
 		double area()const override
 		{
@@ -189,11 +227,12 @@ namespace Geometry
 			ReleaseDC(hwnd, hdc);
 		}
 	};
+#endif 
 	class Circle : Shape
 	{
 		double radius; 
 	public: 
-		Circle(double radius, Color color) : Shape(color), radius(radius){}
+		Circle(double radius, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), radius(radius){}
 		~Circle() {}
 		double perimeter()const override
 		{
@@ -217,7 +256,7 @@ namespace Geometry
 			HBRUSH hbrush = CreateSolidBrush(setRGB(getCOLOR()));
 			SelectObject(hdc, hpen);
 			SelectObject(hdc, hbrush);
-			Ellipse(hdc, 800, 50, 900, 150);
+			Ellipse(hdc, start_x,start_y, start_x+radius,start_y+radius);
 			DeleteObject(hpen);
 			DeleteObject(hbrush);
 			ReleaseDC(hwnd, hdc);
@@ -227,8 +266,8 @@ namespace Geometry
 }
 void main()
 {
-    Geometry::Square square(5, Geometry::Color::CONSOLE_RED);
-    square.info();
+    //Geometry::Square square(5, Geometry::Color::CONSOLE_RED);
+    //square.info();
     Geometry::Rectangle rect{ 15, 8, Geometry::Color::CONSOLE_BLUE};
     rect.info();
 	Geometry::Triangle tri(3, 4, 5, Geometry::Color::CONSOLE_GREEN);

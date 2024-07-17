@@ -1,5 +1,6 @@
-#include<Windows.h>
+#define _USE_MATH_DEFINES
 #include<iostream>
+#include<Windows.h>
 using namespace std;
 #ifdef AnimalAbstract
 class Animal
@@ -272,13 +273,21 @@ namespace Geometry
 	public: 
 		Circle(double radius, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), radius(radius){}
 		~Circle() {}
+		double getRADIUS()const
+		{
+			return radius;
+		}
+		void setRADIUS()
+		{
+			this->radius = radius;
+		}
 		double perimeter()const override
 		{
-			return radius * 3.14 * 2;
+			return radius * M_PI * 2;
 		}
 		double area()const override
 		{
-			return radius * radius * 3.14;
+			return radius * radius * M_PI;
 		}
 		void info()const override
 		{
@@ -294,13 +303,12 @@ namespace Geometry
 			HBRUSH hbrush = CreateSolidBrush(setRGB(getCOLOR()));
 			SelectObject(hdc, hpen);
 			SelectObject(hdc, hbrush);
-			Ellipse(hdc, start_x,start_y, start_x+radius,start_y+radius);
+			Ellipse(hdc, start_x,start_y, start_x+radius*2,start_y+radius*2);
 			DeleteObject(hpen);
 			DeleteObject(hbrush);
 			ReleaseDC(hwnd, hdc);
 		}
 	};
-
 }
 void main()
 {
@@ -310,6 +318,6 @@ void main()
     rect.info();
 	Geometry::Triangle tri(80,70, 600, 100, 5, Geometry::Color::CONSOLE_GREEN);
 	tri.info();
-	Geometry::Circle circ(40, 400,250,5 , Geometry::Color::CONSOLE_GREEN);
+	Geometry::Circle circ(40, 300,200,5 , Geometry::Color::CONSOLE_GREEN);
 	circ.info();
 }

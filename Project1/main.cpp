@@ -1,5 +1,7 @@
 #include<iostream>
+#include<Windows.h>
 using namespace std;
+#ifdef FIGURES
 class Figures
 {
 public:
@@ -7,7 +9,7 @@ public:
 	virtual double square() = 0;
 	virtual void info() = 0;
 };
-class Polygon: public Figures
+class Polygon : public Figures
 {
 public:
 	void info()override
@@ -15,21 +17,27 @@ public:
 		cout << "Perimeter: " << perimeter() << "\t" << "Area: " << square() << "\n\n";
 	}
 };
-class Round : Figures{};
+class Round : Figures {};
 
 class Rectangle : public Polygon
 {
-	int width,height;
+	int width, height;
 public:
 	//constr
 	Rectangle(int width, int height) : height(height), width(width)
-    {cout << "RectangleConstr\t" << this << endl;}
+	{
+		cout << "RectangleConstr\t" << this << endl;
+	}
 	//meth
-	double perimeter()override 
-	{return 2 * (height + width);}
+	double perimeter()override
+	{
+		return 2 * (height + width);
+	}
 
-	double square()override 
-	{return height * width;}
+	double square()override
+	{
+		return height * width;
+	}
 
 	void info()override
 	{
@@ -39,15 +47,21 @@ public:
 	}
 	//destr
 	~Rectangle()
-	{cout << "RectnglDestr:\t" << this << endl;}
+	{
+		cout << "RectnglDestr:\t" << this << endl;
+	}
 };
-class Square : public Rectangle 
+class Square : public Rectangle
 {
 public:
 	Square(int size) : Rectangle(size, size)
-	{cout << "SquareConstr:\t" << this << endl;}
+	{
+		cout << "SquareConstr:\t" << this << endl;
+	}
 	~Square()
-	{cout << "SquareDestr:\t" << this << endl;}
+	{
+		cout << "SquareDestr:\t" << this << endl;
+	}
 };
 
 
@@ -60,14 +74,14 @@ public:
 		cout << "TriangleConstr:\t" << this << endl;
 	}
 	~Triangle()
-	{	
+	{
 		cout << "TriangleDestr:\t" << this << endl;
 	}
 	double perimeter()override { return f_side + sec_side + thrd_side; }
 	double square()override
 	{
-		double p = perimeter()/2;
-		return sqrt(p*(p-f_side)*(p-sec_side)*(p-thrd_side));
+		double p = perimeter() / 2;
+		return sqrt(p * (p - f_side) * (p - sec_side) * (p - thrd_side));
 	}
 	void info()override
 	{
@@ -81,7 +95,9 @@ class Circle : public Round
 	int radius;
 public:
 	Circle(int radius) : radius(radius)
-	{cout << "CircleConstr:\t" << this << endl;}
+	{
+		cout << "CircleConstr:\t" << this << endl;
+	}
 	double perimeter()override
 	{
 		return radius * 3.14 * 2;
@@ -96,14 +112,13 @@ public:
 		cout << "Lenght: " << perimeter() << "\t" << "Area: " << square() << "\n\n";
 	}
 };
-
-
+#endif // CLASSES
 void main()
 {
-	Rectangle one(3, 4);
-	Square two(5);
-	Triangle three(3,3,5);
-	Circle four(5);
-	one.info(); two.info();
-	three.info(); four.info();
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+for (int i = 0; i < 256; i++)
+{
+   SetConsoleTextAttribute(hConsole, i);
+   cout << i << ": Hey! Ho! Let's go!" << endl;
+}
 }

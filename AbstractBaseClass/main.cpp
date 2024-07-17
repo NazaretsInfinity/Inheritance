@@ -88,7 +88,7 @@ namespace Geometry
 			case CONSOLE_BLUE: return 0xFF0000; break;
 			case CONSOLE_RED: return 0x0000FF; break;
 			case CONSOLE_GREEN: return 0x00FF00; break;
-			case CONSOLE_YELLOW: return 0x00FFFF; break;
+			case CONSOLE_YELLOW: return 0x0000FFFF; break;
 			}
 		}
 		virtual void info()const

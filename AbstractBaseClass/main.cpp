@@ -95,7 +95,7 @@ namespace Geometry
 		{
 
 			cout << "Area of figure: " << area() << endl;
-			cout << "Perimeter of figure: " << perimeter() << endl;
+			cout << "Perimeter of figure: " << perimeter() << "\n\n";
 			draw();
 		}
 	};
@@ -182,7 +182,7 @@ namespace Geometry
 		void info()const override
 		{
 			cout << typeid(*this).name() << endl;
-			Shape::info(); cout << endl;
+			Shape::info(); 
 		}
 	};
 	class Square :public Rectangle
@@ -228,6 +228,44 @@ namespace Geometry
 		}
 	};
 #endif 
+	class Triangle : public Shape
+	{
+		double height, side;
+	public:
+		Triangle(double height,double side, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), height(height),side(side){}
+		~Triangle(){}
+		double perimeter()const override
+		{
+			double lat = sqrt(height * height + side/2 * side/2);
+			return 2 * lat + side;
+		}
+		double area()const override
+		{
+			return height * side / 2;
+		}
+		void draw()const override
+		{
+			HWND hwnd = GetConsoleWindow();
+			HDC hdc = GetDC(hwnd);
+			HPEN hPen = CreatePen(PS_SOLID, 5, setRGB(getCOLOR()));
+
+			HBRUSH hBrush = CreateSolidBrush(setRGB(getCOLOR()));
+
+			const POINT verts[3] = { {start_x,start_y}, {start_x-side/2,start_y+height}, {start_x+side/2,start_y+height} };
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+			Polygon(hdc, verts, 3);
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+			ReleaseDC(hwnd, hdc);
+		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Height: " << height << "\nSide: " << side << endl;
+			Shape::info(); 
+		}
+	};
 	class Circle : Shape
 	{
 		double radius; 
@@ -246,7 +284,7 @@ namespace Geometry
 		{
 			cout << typeid(*this).name() << endl; 
 			cout << "Radius: " << radius << endl;
-			Shape::info(); cout << endl;
+			Shape::info();
 	    }
 		void draw()const override
 		{
@@ -266,12 +304,12 @@ namespace Geometry
 }
 void main()
 {
-    //Geometry::Square square(5, Geometry::Color::CONSOLE_RED);
-    //square.info();
-    Geometry::Rectangle rect{ 15, 8, Geometry::Color::CONSOLE_BLUE};
+    Geometry::Square square(50, 400 , 50, 5, Geometry::Color::CONSOLE_RED);
+    square.info();
+    Geometry::Rectangle rect{ 150, 80, 400,150, 5, Geometry::Color::CONSOLE_YELLOW};
     rect.info();
-	Geometry::Triangle tri(3, 4, 5, Geometry::Color::CONSOLE_GREEN);
+	Geometry::Triangle tri(80,70, 600, 100, 5, Geometry::Color::CONSOLE_GREEN);
 	tri.info();
-	Geometry::Circle circ(4, Geometry::Color::CONSOLE_YELLOW);
+	Geometry::Circle circ(40, 400,250,5 , Geometry::Color::CONSOLE_GREEN);
 	circ.info();
 }

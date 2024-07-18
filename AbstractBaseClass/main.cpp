@@ -192,6 +192,13 @@ namespace Geometry
 		Square(double side, SHAPE_TAKE_PARAMETERS) :Rectangle(side, side, SHAPE_GIVE_PARAMETERS) {}
 		~Square() {}
 	};
+	class Triangle : public Shape
+	{
+	public:
+		Triangle(SHAPE_TAKE_PARAMETERS):Shape(SHAPE_GIVE_PARAMETERS){}
+		~Triangle(){}
+		virtual double getHEIGHT()const = 0;
+	};
 #ifdef Triangle_3side_members
 	class Triangle : public Shape
 	{
@@ -229,43 +236,152 @@ namespace Geometry
 		}
 	};
 #endif 
-	class Triangle : public Shape
+	class EquilateralTriangle : public Triangle
 	{
-		double height, side;
+		double side;
 	public:
-		Triangle(double height,double side, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), height(height),side(side){}
-		~Triangle(){}
-		double perimeter()const override
+		EquilateralTriangle(double side, SHAPE_TAKE_PARAMETERS) : Triangle(SHAPE_GIVE_PARAMETERS),side(side){}
+	~EquilateralTriangle(){}
+		double getSIDE()const
 		{
-			double lat = sqrt(height * height + side/2 * side/2);
-			return 2 * lat + side;
+			return side;
+		}
+		void setSIDE(double side)
+		{
+			this->side = side;
+		}
+		double getHEIGHT()const override
+		{
+			return sqrt(side * side - side / 2 * side / 2);
 		}
 		double area()const override
 		{
-			return height * side / 2;
+			return side * getHEIGHT() / 2;
+		}
+		double perimeter()const override
+		{
+			return side * 3;
 		}
 		void draw()const override
 		{
 			HWND hwnd = GetConsoleWindow();
 			HDC hdc = GetDC(hwnd);
-			HPEN hPen = CreatePen(PS_SOLID, 5, setRGB(getCOLOR()));
 
-			HBRUSH hBrush = CreateSolidBrush(setRGB(getCOLOR()));
+			HPEN hPen = CreatePen(PS_SOLID, linewidth, setRGB(color));
+			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
 
-			const POINT verts[3] = { {start_x,start_y}, {start_x-side/2,start_y+height}, {start_x+side/2,start_y+height} };
+			POINT apt[] =
+			{
+				{start_x + side / 2,start_y - getHEIGHT()},
+				{start_x,start_y},
+				{start_x + side,start_y}
+			};
 			SelectObject(hdc, hPen);
-			SelectObject(hdc, hBrush);
-			Polygon(hdc, verts, 3);
+			SelectObject(hdc, hbrush);
+			Polygon(hdc, apt, 3);
 			DeleteObject(hPen);
-			DeleteObject(hBrush);
+			DeleteObject(hbrush);
 			ReleaseDC(hwnd, hdc);
 		}
 		void info()const override
 		{
 			cout << typeid(*this).name() << endl;
-			cout << "Height: " << height << "\nSide: " << side << endl;
-			Shape::info(); 
+			cout << "Side: " << side << endl;
+			Shape::info();
 		}
+	};
+	class IsoscelesTriangle : public Triangle
+	{
+		double side,latside;
+	public: 
+		IsoscelesTriangle(double side,double latside, SHAPE_TAKE_PARAMETERS):Triangle(SHAPE_GIVE_PARAMETERS), side(side),latside(latside){}
+		~IsoscelesTriangle() {}
+
+		double getHEIGHT()const override
+		{
+			return sqrt(latside * latside - side / 2 * side / 2);
+		}
+		double perimeter()const override
+		{
+			return 2 * latside + side;
+	    }
+		double area()const override
+		{
+			return side * getHEIGHT() / 2;
+		}
+		void draw()const override
+		{
+			HWND hwnd = GetConsoleWindow();
+			HDC hdc = GetDC(hwnd);
+			HPEN hpen = CreatePen(PS_SOLID, 5, setRGB(color));
+			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
+			POINT apt[] =
+			{
+				{start_x + side / 2,start_y - getHEIGHT()},
+				{start_x,start_y},
+				{start_x + side,start_y}
+			};
+			SelectObject(hdc, hpen);
+			SelectObject(hdc, hbrush);
+			Polygon(hdc, apt, 3);
+			DeleteObject(hpen);
+			DeleteObject(hbrush);
+			ReleaseDC(hwnd, hdc);
+		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Side: " << side << "\tLateral side: " << latside << endl;
+			Shape::info();
+		}
+	};
+	class RectangularTriangle :Triangle
+	{
+		double fside, sside;
+	public:
+	RectangularTriangle(double fside,double sside, SHAPE_TAKE_PARAMETERS):Triangle(SHAPE_GIVE_PARAMETERS),fside(fside),sside(sside){}
+	~RectangularTriangle(){}
+	double  getHYPOTENUS()const
+	{
+		return sqrt(fside * fside + sside * sside);
+	}
+	double getHEIGHT()const override
+	{
+		return fside * sside / getHYPOTENUS();
+	}
+	double perimeter()const override
+	{
+		return fside + sside + getHYPOTENUS();
+	}
+	double area()const override
+	{
+		return fside * sside / 2;
+	}
+	void draw()const override
+	{
+		HWND hwnd = GetConsoleWindow();
+		HDC hdc = GetDC(hwnd);
+		HPEN hpen = CreatePen(PS_SOLID, 5, setRGB(color));
+		HBRUSH hbrush = CreateSolidBrush(setRGB(color));
+		POINT apt[] =
+		{
+			{start_x,start_y-fside},
+			{start_x,start_y},
+			{start_x + sside,start_y}
+		};
+		SelectObject(hdc, hpen);
+		SelectObject(hdc, hbrush);
+		Polygon(hdc, apt, 3);
+		DeleteObject(hpen);
+		DeleteObject(hbrush);
+		ReleaseDC(hwnd, hdc);
+	}
+	void info()const override
+	{
+		cout << typeid(*this).name() << endl;
+		cout << "1st leg: " << fside << "\t2nd leg: " << sside << endl;
+		Shape::info();
+	}
 	};
 	class Circle : Shape
 	{
@@ -316,8 +432,13 @@ void main()
     square.info();
     Geometry::Rectangle rect{ 150, 80, 400,150, 5, Geometry::Color::CONSOLE_YELLOW};
     rect.info();
-	Geometry::Triangle tri(80,70, 600, 100, 5, Geometry::Color::CONSOLE_GREEN);
+	Geometry::EquilateralTriangle tri(80, 600, 100, 5, Geometry::Color::CONSOLE_GREEN);
 	tri.info();
+	Geometry::IsoscelesTriangle tri2(80, 90, 670, 150, 5, Geometry::Color::CONSOLE_BLUE);
+	tri2.info();
+	Geometry::RectangularTriangle tri3(70, 80, 570, 160, 5, Geometry::Color::CONSOLE_RED);
+	tri3.info();
 	Geometry::Circle circ(40, 300,200,5 , Geometry::Color::CONSOLE_GREEN);
 	circ.info();
+	
 }

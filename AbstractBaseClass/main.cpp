@@ -313,7 +313,7 @@ namespace Geometry
 		{
 			HWND hwnd = GetConsoleWindow();
 			HDC hdc = GetDC(hwnd);
-			HPEN hpen = CreatePen(PS_SOLID, 5, setRGB(color));
+			HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(color));
 			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
 			POINT apt[] =
 			{
@@ -359,9 +359,9 @@ namespace Geometry
 	}
 	void draw()const override
 	{
-		HWND hwnd = GetConsoleWindow();
+		HWND hwnd = FindWindow(NULL, LPCWSTR("inheritance - Microsoft Visual Studio"));
 		HDC hdc = GetDC(hwnd);
-		HPEN hpen = CreatePen(PS_SOLID, 5, setRGB(color));
+		HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(color));
 		HBRUSH hbrush = CreateSolidBrush(setRGB(color));
 		POINT apt[] =
 		{
@@ -415,7 +415,7 @@ namespace Geometry
 		{
 			HWND hwnd = GetConsoleWindow();
 			HDC hdc = GetDC(hwnd);
-			HPEN hpen = CreatePen(PS_SOLID, 5, setRGB(getCOLOR()));
+			HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(getCOLOR()));
 			HBRUSH hbrush = CreateSolidBrush(setRGB(getCOLOR()));
 			SelectObject(hdc, hpen);
 			SelectObject(hdc, hbrush);
@@ -426,19 +426,23 @@ namespace Geometry
 		}
 	};
 }
+#define Figure_check
 void main()
 {
-    Geometry::Square square(50, 400 , 50, 5, Geometry::Color::CONSOLE_RED);
+#ifdef Figure_check1
+    Geometry::Square square(50, 400 , 70, 5, Geometry::Color::CONSOLE_RED);
     square.info();
     Geometry::Rectangle rect{ 150, 80, 400,150, 5, Geometry::Color::CONSOLE_YELLOW};
     rect.info();
-	Geometry::EquilateralTriangle tri(80, 600, 100, 5, Geometry::Color::CONSOLE_GREEN);
+	Geometry::EquilateralTriangle tri(80, 600, 200, 5, Geometry::Color::CONSOLE_GREEN);
 	tri.info();
-	Geometry::IsoscelesTriangle tri2(80, 90, 670, 150, 5, Geometry::Color::CONSOLE_BLUE);
+	Geometry::IsoscelesTriangle tri2(80, 100, 700, 200, 5, Geometry::Color::CONSOLE_RED);
 	tri2.info();
-	Geometry::RectangularTriangle tri3(70, 80, 570, 160, 5, Geometry::Color::CONSOLE_RED);
+	Geometry::RectangularTriangle tri3(70, 80, 800, 200, 5, Geometry::Color::CONSOLE_YELLOW);
 	tri3.info();
-	Geometry::Circle circ(40, 300,200,5 , Geometry::Color::CONSOLE_GREEN);
+	Geometry::Circle circ(40, 400,260,5 , Geometry::Color::CONSOLE_BLUE);
 	circ.info();
-	
+#endif
+	Geometry::RectangularTriangle tri(700, 800, 100, 600, 10, Geometry::Color::CONSOLE_YELLOW);
+	tri.info();
 }

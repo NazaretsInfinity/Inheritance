@@ -1,5 +1,4 @@
 #include"Shape.h"
-
 		Geometry::Shape::Shape(SHAPE_TAKE_PARAMETERS) : color(color)
 		{
 			set_start_x(start_x);
@@ -74,3 +73,7 @@
 			cout << "Perimeter of figure: " << perimeter() << "\n\n";
 			draw();
 		}
+		int Geometry::Shape::count = 0;
+
+		Geometry::Triangle::Triangle(SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS){}
+		Geometry::Triangle::~Triangle(){}

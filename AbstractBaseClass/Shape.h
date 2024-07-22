@@ -50,11 +50,4 @@ namespace Geometry
 		COLORREF setRGB(Color color)const;
 		virtual void info()const;
 	}; 
-	class Triangle : public Shape
-	{
-	public:
-		Triangle(SHAPE_TAKE_PARAMETERS);
-		~Triangle();
-		virtual double getHEIGHT()const = 0;
-	};
 }

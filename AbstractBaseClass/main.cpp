@@ -8,7 +8,7 @@ using namespace std;
 void main()
 {
 #ifdef Figure_check
-	Geometry::Square square(50, 400, 70, 5, Geometry::Color::CONSOLE_RED);
+	Geometry::Square square(50, 400, 50, 5, Geometry::Color::CONSOLE_RED);
     square.info();
     Geometry::Rectangle rect{ 150, 80, 400,150, 5, Geometry::Color::CONSOLE_YELLOW};
     rect.info();

@@ -2,6 +2,13 @@
 #include"Shape.h"
 namespace Geometry
 {
+	class Triangle :public Shape
+	{
+	public:
+		Triangle(SHAPE_TAKE_PARAMETERS);
+		~Triangle();
+		virtual double getHEIGHT()const = 0;
+	};
 	class EquilateralTriangle : public Triangle
 	{
 		double side;

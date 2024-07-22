@@ -1,6 +1,9 @@
 #include"Triangle.h"
 namespace Geometry
 {
+	Triangle::Triangle(SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
+	Triangle::~Triangle() {}
+
 	EquilateralTriangle::EquilateralTriangle(double side, SHAPE_TAKE_PARAMETERS) : Triangle(SHAPE_GIVE_PARAMETERS)
 	{
 		setSIDE(side);

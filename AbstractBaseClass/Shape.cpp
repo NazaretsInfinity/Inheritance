@@ -75,5 +75,3 @@
 		}
 		int Geometry::Shape::count = 0;
 
-		Geometry::Triangle::Triangle(SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS){}
-		Geometry::Triangle::~Triangle(){}

@@ -2,7 +2,7 @@
 #include"Shape.h"
 namespace Geometry
 {
-	class Rectangle :public Geometry::Shape
+	class Rectangle :public Shape
 	{
 		double width, height;
 	public:

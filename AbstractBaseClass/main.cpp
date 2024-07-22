@@ -1,182 +1,12 @@
 #define _USE_MATH_DEFINES
 #include<iostream>
-#include<Windows.h>
-#include"Shape.h"
 #include"Rectangle.h"
 #include "Triangle.h"
+#include "Circle.h"
 using namespace std;
 #ifdef ddd
 namespace Geometry
 {
-	class EquilateralTriangle : public Triangle
-	{
-		double side;
-	public:
-		EquilateralTriangle(double side, SHAPE_TAKE_PARAMETERS) : Triangle(SHAPE_GIVE_PARAMETERS)
-		{
-			setSIDE(side);
-		}
-		~EquilateralTriangle() {}
-		double getSIDE()const
-		{
-			return side;
-		}
-		void setSIDE(double side)
-		{
-			this->side = filtersize(side);
-		}
-		double getHEIGHT()const override
-		{
-			return sqrt(side * side - side / 2 * side / 2);
-		}
-		double area()const override
-		{
-			return side * getHEIGHT() / 2;
-		}
-		double perimeter()const override
-		{
-			return side * 3;
-		}
-		void draw()const override
-		{
-			HWND hwnd = GetConsoleWindow();
-			HDC hdc = GetDC(hwnd);
-
-			HPEN hPen = CreatePen(PS_SOLID, linewidth, setRGB(color));
-			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
-			POINT apt[] =
-			{
-				{start_x ,start_y + side},
-				{start_x + side, start_y + side},
-				{start_x + side / 2,start_y + side - getHEIGHT()}
-			};
-			SelectObject(hdc, hPen);
-			SelectObject(hdc, hbrush);
-			Polygon(hdc, apt, 3);
-			DeleteObject(hPen);
-			DeleteObject(hbrush);
-			ReleaseDC(hwnd, hdc);
-		}
-		void info()const override
-		{
-			cout << typeid(*this).name() << endl;
-			cout << "Side: " << side << endl;
-			Shape::info();
-		}
-	};
-	class IsoscelesTriangle : public Triangle
-	{
-		double side, latside;
-	public:
-		IsoscelesTriangle(double side, double latside, SHAPE_TAKE_PARAMETERS) :Triangle(SHAPE_GIVE_PARAMETERS)
-		{
-			setSIDE(side);
-			setLATSIDE(latside);
-		}
-		~IsoscelesTriangle() {}
-		void setSIDE(double side)
-		{
-			this->side = side;
-		}
-		void setLATSIDE(double latside)
-		{
-			this->latside = latside;
-		}
-		double getHEIGHT()const override
-		{
-			return sqrt(latside * latside - side / 2 * side / 2);
-		}
-		double perimeter()const override
-		{
-			return 2 * latside + side;
-		}
-		double area()const override
-		{
-			return side * getHEIGHT() / 2;
-		}
-		void draw()const override
-		{
-			HWND hwnd = GetConsoleWindow();
-			HDC hdc = GetDC(hwnd);
-			HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(color));
-			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
-			POINT apt[] =
-			{
-				{start_x + side / 2,start_y - getHEIGHT()},
-				{start_x,start_y},
-				{start_x + side,start_y}
-			};
-			SelectObject(hdc, hpen);
-			SelectObject(hdc, hbrush);
-			Polygon(hdc, apt, 3);
-			DeleteObject(hpen);
-			DeleteObject(hbrush);
-			ReleaseDC(hwnd, hdc);
-		}
-		void info()const override
-		{
-			cout << typeid(*this).name() << endl;
-			cout << "Side: " << side << "\tLateral side: " << latside << endl;
-			Shape::info();
-		}
-	};
-	class RectangularTriangle :public Triangle
-	{
-		double fside, sside;
-	public:
-		RectangularTriangle(double fside, double sside, SHAPE_TAKE_PARAMETERS) :Triangle(SHAPE_GIVE_PARAMETERS), fside(fside), sside(sside) {}
-		~RectangularTriangle() {}
-		void setFSIDE(double fside)
-		{
-			this->fside = filtersize(fside);
-		}
-		void setSSIDE(double sside)
-		{
-			this->sside = filtersize(sside);
-		}
-		double  getHYPOTENUS()const
-		{
-			return sqrt(fside * fside + sside * sside);
-		}
-		double getHEIGHT()const override
-		{
-			return fside * sside / getHYPOTENUS();
-		}
-		double perimeter()const override
-		{
-			return fside + sside + getHYPOTENUS();
-		}
-		double area()const override
-		{
-			return fside * sside / 2;
-		}
-		void draw()const override
-		{
-			//HWND hwnd = FindWindow(NULL, LPCWSTR("inheritance - Microsoft Visual Studio"));
-			HWND hwnd = GetConsoleWindow();
-			HDC hdc = GetDC(hwnd);
-			HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(color));
-			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
-			POINT apt[] =
-			{
-				{start_x,start_y - fside},
-				{start_x,start_y},
-				{start_x + sside,start_y}
-			};
-			SelectObject(hdc, hpen);
-			SelectObject(hdc, hbrush);
-			Polygon(hdc, apt, 3);
-			DeleteObject(hpen);
-			DeleteObject(hbrush);
-			ReleaseDC(hwnd, hdc);
-		}
-		void info()const override
-		{
-			cout << typeid(*this).name() << endl;
-			cout << "1st leg: " << fside << "\t2nd leg: " << sside << endl;
-			Shape::info();
-		}
-	};
 	class Circle :public Shape
 	{
 		double radius;
@@ -240,8 +70,8 @@ void main()
 	tri2.info();
 	Geometry::RectangularTriangle tri3(70, 80, 800, 200, 5, Geometry::Color::CONSOLE_YELLOW);
 	tri3.info();
-	//Geometry::Circle circ(40, 400,260,1, Geometry::Color::CONSOLE_BLUE);
-	//circ.info();
+	Geometry::Circle circ(40, 400,260,5, Geometry::Color::CONSOLE_BLUE);
+	circ.info();
 
 	cout << "Number of shapes: " << Geometry::Shape::getCOUNT() << endl;
 #endif

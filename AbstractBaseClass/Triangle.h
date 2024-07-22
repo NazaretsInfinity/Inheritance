@@ -2,7 +2,7 @@
 #include"Shape.h"
 namespace Geometry
 {
-	class EquilateralTriangle : public Geometry::Triangle
+	class EquilateralTriangle : public Triangle
 	{
 		double side;
 	public:

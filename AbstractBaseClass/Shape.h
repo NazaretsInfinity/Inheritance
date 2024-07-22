@@ -31,82 +31,23 @@ namespace Geometry
 		static const int MAXSIZE = 550;
 		static int count;
 	public:
-		Shape(SHAPE_TAKE_PARAMETERS) : color(color)
-		{
-			set_start_x(start_x);
-			set_start_y(start_y);
-			set_line_width(linewidth);
-			count++;
-		}
+		Shape(SHAPE_TAKE_PARAMETERS);
 		virtual ~Shape() { count--; }
 		virtual double area()const = 0;
 		virtual double perimeter()const = 0;
 		virtual void draw()const = 0;
 		//INCAPSULATION
-		static int getCOUNT()
-		{
-			return count;
-		}
-		Color getCOLOR()const
-		{
-			return color;
-		}
-		unsigned int getX()const
-		{
-			return start_x;
-		}
-		unsigned int getY()const
-		{
-			return start_y;
-		}
-		unsigned int get_linewidth()const
-		{
-			return linewidth;
-		}
-		void set_start_x(unsigned int start_x)
-		{
-			if (start_x < MINX)start_x = MINX;
-			if (start_x > MAXX) start_x = MAXX;
-			this->start_x = start_x;
-		}
-		void set_start_y(unsigned int start_y)
-		{
-			if (start_y < MINY)start_y = MINY;
-			if (start_y > MAXY)start_y = MAXY;
-			this->start_y = start_y;
-		}
-		void set_line_width(unsigned int line_width)
-		{
-			if (line_width < MINLINE)line_width = MINLINE;
-			if (line_width > MAXLINE)line_width = MAXLINE;
-			this->linewidth = line_width;
-		}
-		double filtersize(double size)
-		{
-			if (size < MINSIZE)size = MINSIZE;
-			if (size > MAXSIZE)size = MAXSIZE;
-			return size;
-		}
-		void setCOLOR(Color color)
-		{
-			this->color = color;
-		}
-		COLORREF setRGB(Color color)const
-		{
-			switch (color)
-			{
-			case CONSOLE_BLUE: return 0xFF0000; break;
-			case CONSOLE_RED: return 0x0000FF; break;
-			case CONSOLE_GREEN: return 0x00FF00; break;
-			case CONSOLE_YELLOW: return 0x0000FFFF; break;
-			}
-		}
-		virtual void info()const
-		{
-
-			cout << "Area of figure: " << area() << endl;
-			cout << "Perimeter of figure: " << perimeter() << "\n\n";
-			draw();
-		}
+		static int getCOUNT();
+		Color getCOLOR()const;
+		unsigned int getX()const;
+		unsigned int getY()const;
+		unsigned int get_linewidth()const;
+		void set_start_x(unsigned int start_x);
+		void set_start_y(unsigned int start_y);
+		void set_line_width(unsigned int line_width);
+		double filtersize(double size);
+		void setCOLOR(Color color);
+		COLORREF setRGB(Color color)const;
+		virtual void info()const;
 	};
 }

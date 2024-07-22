@@ -43,13 +43,33 @@ namespace Geometry
 	protected:
 		Color color;
 		int start_x, start_y, linewidth;
+
+		static const int MINX = 100;
+		static const int MAXX = 1000;
+		static const int MINY = 100;
+		static const int MAXY = 700;
+		static const int MINLINE = 1;
+		static const int MAXLINE = 32;
+		static const int MINSIZE = 50;
+		static const int MAXSIZE = 550;
+		static int count;
 	public:
-		Shape(SHAPE_TAKE_PARAMETERS) : color(color),start_x(start_x),start_y(start_y),linewidth(linewidth) {}
-		virtual ~Shape() {}
+		Shape(SHAPE_TAKE_PARAMETERS) : color(color)
+		{
+			set_start_x(start_x);
+			set_start_y(start_y);
+			set_line_width(linewidth);
+			count++;
+		}
+		virtual ~Shape() {count--;}
 		virtual double area()const = 0;
 		virtual double perimeter()const = 0;
 		virtual void draw()const = 0;
 		//INCAPSULATION
+		static int getCOUNT()
+		{
+			return count;
+		}
 		Color getCOLOR()const
 		{
 			return color;
@@ -68,15 +88,27 @@ namespace Geometry
 		}
 		void set_start_x(unsigned int start_x)
 		{
-			this->start_x = start_x;
+			if (start_x < MINX)start_x = MINX;
+			if (start_x > MAXX) start_x = MAXX;
+		   this->start_x = start_x;
 		}
 		void set_start_y(unsigned int start_y)
 		{
+			if (start_y < MINY)start_y = MINY;
+			if (start_y > MAXY)start_y = MAXY;
 			this->start_y = start_y;
 		}
 		void set_line_width(unsigned int line_width)
 		{
-			this->linewidth = linewidth;
+			if (line_width < MINLINE)line_width = MINLINE;
+			if (line_width > MAXLINE)line_width = MAXLINE;
+			this->linewidth = line_width;
+		}
+		double filtersize(double size)
+		{
+			if (size < MINSIZE)size = MINSIZE;
+			if (size > MAXSIZE)size = MAXSIZE;
+			return size;
 		}
 		void setCOLOR(Color color)
 		{
@@ -99,7 +131,7 @@ namespace Geometry
 			cout << "Perimeter of figure: " << perimeter() << "\n\n";
 			draw();
 		}
-	};
+	}; int Shape::count = 0;
 #ifdef SQUARE
 	class Square : public Shape
 	{
@@ -144,13 +176,24 @@ namespace Geometry
 	};
 #endif 
 
-	class Rectangle : Shape
+	class Rectangle :public  Shape
 	{
 		double width, height;
 	public:
-		Rectangle(double width, double height, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), width(width), height(height) {}
+		Rectangle(double width, double height, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) 
+		{
+			setWIDTH(width);
+			setHEIGHT(height);
+		}
 		~Rectangle() {}
-
+		void setWIDTH(double width)
+		{
+			this->width = filtersize(width);
+		}
+		void setHEIGHT(double height)
+		{
+			this->height = filtersize(height);
+		}
 		double area()const override
 		{
 			return width * height;
@@ -162,16 +205,9 @@ namespace Geometry
 		void draw()const override
 		{
 			HWND hwnd = GetConsoleWindow();
-
-
 			HDC hdc = GetDC(hwnd);
-
-			
-
 			HPEN hPen = CreatePen(PS_SOLID, 5, setRGB(getCOLOR()));
-
 			HBRUSH hBrush = CreateSolidBrush(setRGB(getCOLOR()));
-			
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			::Rectangle(hdc, start_x,start_y,start_x+width,start_y+height);
@@ -199,48 +235,14 @@ namespace Geometry
 		~Triangle(){}
 		virtual double getHEIGHT()const = 0;
 	};
-#ifdef Triangle_3side_members
-	class Triangle : public Shape
-	{
-		int f_side, sec_side, thrd_side;
-	public:
-		Triangle(int fs, int ss, int ts, Color color) : Shape(color), f_side(fs), sec_side(ss), thrd_side(ts) {}
-		~Triangle() {}
-		double perimeter()const override { return f_side + sec_side + thrd_side; }
-		double area()const override
-		{
-			double p = perimeter() / 2;
-			return sqrt(p * (p - f_side) * (p - sec_side) * (p - thrd_side));
-		}
-		void info()const override
-		{
-			cout << typeid(*this).name() << endl;
-			cout << "1st side: " << f_side << "\t2nd side: " << sec_side << "\t3rd side: " << thrd_side << endl;
-			Shape::info(); cout << endl;
-		}
-		void draw()const override
-		{
-			HWND hwnd = GetConsoleWindow();
-			HDC hdc = GetDC(hwnd);
-			HPEN hPen = CreatePen(PS_SOLID, 5, setRGB(getCOLOR()));
-
-			HBRUSH hBrush = CreateSolidBrush(setRGB(getCOLOR()));
-
-			const POINT verts[3] = { {650,50}, {600,150}, {700,150} };
-			SelectObject(hdc, hPen);
-			SelectObject(hdc, hBrush);
-			Polygon(hdc, verts, 3);
-			DeleteObject(hPen);
-			DeleteObject(hBrush);
-			ReleaseDC(hwnd, hdc);
-		}
-	};
-#endif 
 	class EquilateralTriangle : public Triangle
 	{
 		double side;
 	public:
-		EquilateralTriangle(double side, SHAPE_TAKE_PARAMETERS) : Triangle(SHAPE_GIVE_PARAMETERS),side(side){}
+		EquilateralTriangle(double side, SHAPE_TAKE_PARAMETERS) : Triangle(SHAPE_GIVE_PARAMETERS)
+		{
+			setSIDE(side);
+		}
 	~EquilateralTriangle(){}
 		double getSIDE()const
 		{
@@ -248,7 +250,7 @@ namespace Geometry
 		}
 		void setSIDE(double side)
 		{
-			this->side = side;
+			this->side = filtersize(side);
 		}
 		double getHEIGHT()const override
 		{
@@ -269,12 +271,11 @@ namespace Geometry
 
 			HPEN hPen = CreatePen(PS_SOLID, linewidth, setRGB(color));
 			HBRUSH hbrush = CreateSolidBrush(setRGB(color));
-
 			POINT apt[] =
 			{
-				{start_x + side / 2,start_y - getHEIGHT()},
-				{start_x,start_y},
-				{start_x + side,start_y}
+				{start_x ,start_y+side},
+				{start_x+side, start_y+side},
+				{start_x+side/2,start_y+side-getHEIGHT()}
 			};
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hbrush);
@@ -294,9 +295,20 @@ namespace Geometry
 	{
 		double side,latside;
 	public: 
-		IsoscelesTriangle(double side,double latside, SHAPE_TAKE_PARAMETERS):Triangle(SHAPE_GIVE_PARAMETERS), side(side),latside(latside){}
+		IsoscelesTriangle(double side, double latside, SHAPE_TAKE_PARAMETERS) :Triangle(SHAPE_GIVE_PARAMETERS)
+		{
+			setSIDE(side);
+			setLATSIDE(latside);
+		}
 		~IsoscelesTriangle() {}
-
+		 void setSIDE(double side)
+		{
+			this->side = side;
+		}
+		void setLATSIDE(double latside)
+		{
+			this->latside = latside;
+		}
 		double getHEIGHT()const override
 		{
 			return sqrt(latside * latside - side / 2 * side / 2);
@@ -335,12 +347,20 @@ namespace Geometry
 			Shape::info();
 		}
 	};
-	class RectangularTriangle :Triangle
+	class RectangularTriangle :public Triangle
 	{
 		double fside, sside;
 	public:
 	RectangularTriangle(double fside,double sside, SHAPE_TAKE_PARAMETERS):Triangle(SHAPE_GIVE_PARAMETERS),fside(fside),sside(sside){}
 	~RectangularTriangle(){}
+	void setFSIDE(double fside)
+	{
+		this->fside = filtersize(fside);
+	}
+	void setSSIDE(double sside)
+	{
+		this->sside = filtersize(sside);
+	}
 	double  getHYPOTENUS()const
 	{
 		return sqrt(fside * fside + sside * sside);
@@ -359,7 +379,8 @@ namespace Geometry
 	}
 	void draw()const override
 	{
-		HWND hwnd = FindWindow(NULL, LPCWSTR("inheritance - Microsoft Visual Studio"));
+	    //HWND hwnd = FindWindow(NULL, LPCWSTR("inheritance - Microsoft Visual Studio"));
+		HWND hwnd = GetConsoleWindow();
 		HDC hdc = GetDC(hwnd);
 		HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(color));
 		HBRUSH hbrush = CreateSolidBrush(setRGB(color));
@@ -383,17 +404,20 @@ namespace Geometry
 		Shape::info();
 	}
 	};
-	class Circle : Shape
+	class Circle :public Shape
 	{
 		double radius; 
 	public: 
-		Circle(double radius, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS), radius(radius){}
+		Circle(double radius, SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS)
+		{
+			setRADIUS(radius);
+		}
 		~Circle() {}
 		double getRADIUS()const
 		{
 			return radius;
 		}
-		void setRADIUS()
+		void setRADIUS(double radius)
 		{
 			this->radius = radius;
 		}
@@ -413,6 +437,7 @@ namespace Geometry
 	    }
 		void draw()const override
 		{
+			//HWND hwnd = FindWindow(NULL, LPCWSTR("inheritance - Microsoft Visual Studio"));
 			HWND hwnd = GetConsoleWindow();
 			HDC hdc = GetDC(hwnd);
 			HPEN hpen = CreatePen(PS_SOLID, linewidth, setRGB(getCOLOR()));
@@ -429,7 +454,7 @@ namespace Geometry
 #define Figure_check
 void main()
 {
-#ifdef Figure_check1
+#ifdef Figure_check
     Geometry::Square square(50, 400 , 70, 5, Geometry::Color::CONSOLE_RED);
     square.info();
     Geometry::Rectangle rect{ 150, 80, 400,150, 5, Geometry::Color::CONSOLE_YELLOW};
@@ -440,9 +465,9 @@ void main()
 	tri2.info();
 	Geometry::RectangularTriangle tri3(70, 80, 800, 200, 5, Geometry::Color::CONSOLE_YELLOW);
 	tri3.info();
-	Geometry::Circle circ(40, 400,260,5 , Geometry::Color::CONSOLE_BLUE);
+	Geometry::Circle circ(40, 400,260,1, Geometry::Color::CONSOLE_BLUE);
 	circ.info();
+
+	cout << "Number of shapes: " << Geometry::Shape::getCOUNT() << endl;
 #endif
-	Geometry::RectangularTriangle tri(700, 800, 100, 600, 10, Geometry::Color::CONSOLE_YELLOW);
-	tri.info();
 }

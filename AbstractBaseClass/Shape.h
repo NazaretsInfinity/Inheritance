@@ -13,7 +13,7 @@ namespace Geometry
 		CONSOLE_YELLOW = 0x66,
 		CONSOLE_DEFAULT = 0x07
 	};
-#define SHAPE_TAKE_PARAMETERS	unsigned int start_x, unsigned int start_y, unsigned int linewidth, Geometry::Color color
+#define SHAPE_TAKE_PARAMETERS	unsigned int start_x, unsigned int start_y, unsigned int linewidth, Color color
 #define SHAPE_GIVE_PARAMETERS	start_x, start_y, linewidth, color
 	class Shape
 	{
